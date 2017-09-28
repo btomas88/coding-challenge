@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				//attach a click event to the button
+				$('#create-graph').click(function() {
+
+					// default data for the graph with empty labels and datasets
+					var chartData = {
+					  labels: [],
+					  datasets: [{ 
+						data: [],
+						label: "",
+						borderColor: "#3e95cd",
+						fill: false
+					  }]
+					};
+
+					//chart options
+					var chartOptions = {
+					  title: {
+						display: true,
+						text: 'Primes'
+					  }
+					};
+
+					//get the chart area
+					var ctx = $('#line-chart');
+
+					//draw empty chart which will be updated later
+					primeChart = new Chart(ctx, {
+							type   : 'line',
+							data   : chartData,
+							options: chartOptions
+						  });
+
+
+					var prim;
+					var primArray = [];
+					// calculate primes and save them to the primArray
+					for (i = 2; i < 10000; i++) {
+						prim = 1;
+						for (j = 2; j <= i/2; j++) {
+						if (i%j == 0) {
+							prim = 0;
+						  break;
+						}
+					  }
+					  
+					  if (prim){
+						primArray.push(i);
+						}
+					};
+
+
+					var sum=0;
+					var i = 0;
+					// start drawing the chart using setInterval fuction (so we can actually see the graph draw)
+					var drawChart = setInterval(function() { 	
+					  length = primArray.length
+					  if (i < (primArray.length)) {
+					  	// calculate sum
+						sum += primArray[i];
+						// update x axis
+						primeChart.data.labels.push(primArray[i]);
+						// update y axis
+						primeChart.data.datasets[0].data.push(sum);
+						// update the graph - draw point
+						primeChart.update();
+					  } else {
+					  	//when the end of array is reached stop
+						clearInterval(drawChart)
+					  }
+					  i++
+					}, 0); // set to 0 so the graph can update as fast as the browser allows it
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<button type="button" id="create-graph">Click</button>
+		<canvas id="line-chart" width="800" height="450"></canvas>
+	</body>
+</html>
